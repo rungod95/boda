@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Marina &amp; Javier · 13·03·2027</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --cream:       #FDF8F0;
+            --gold:        #C9A84C;
+            --gold-light:  #E5C76B;
+            --gold-dark:   #9A7730;
+            --brown:       #3D2B1F;
+            --brown-mid:   #6B4C3B;
+            --brown-light: #9E7A68;
+        }
+
+        html, body {
+            min-height: 100%;
+        }
+
+        body {
+            background-color: var(--cream);
+            font-family: 'Lato', sans-serif;
+            color: var(--brown);
+            display: flex;
+            justify-content: center;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 10% 10%, rgba(201,168,76,.10) 0%, transparent 55%),
+                radial-gradient(ellipse at 90% 90%, rgba(201,168,76,.10) 0%, transparent 55%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            padding: 16px 16px 48px;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Step transitions ── */
+        .step {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            animation: fadeUp .3s ease;
+        }
+        .step.active { display: flex; }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Progress dots ── */
+        .progress {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: rgba(201,168,76,.25);
+            transition: all .3s;
+        }
+        .dot.active { background: var(--gold); transform: scale(1.35); }
+        .dot.done   { background: var(--gold-dark); }
+
+        /* ── Card ── */
+        .card {
+            background: rgba(255,255,255,.88);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(201,168,76,.30);
+            border-radius: 18px;
+            padding: 28px 22px;
+            box-shadow: 0 6px 28px rgba(61,43,31,.09);
+        }
+
+        /* ── Ornamental divider ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 14px 0;
+            color: var(--gold);
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(201,168,76,.5), transparent);
+        }
+
+        /* ── Step header ── */
+        .step-head {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .step-head .orn {
+            display: block;
+            color: var(--gold);
+            font-size: 18px;
+            letter-spacing: 6px;
+            margin-bottom: 6px;
+        }
+        .step-head h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 21px;
+            line-height: 1.3;
+        }
+        .step-head p {
+            margin-top: 7px;
+            color: var(--brown-mid);
+            font-size: 14px;
+            font-weight: 300;
+            line-height: 1.5;
+        }
+
+        /* ── Back button ── */
+        .back {
+            background: none;
+            border: none;
+            color: var(--brown-light);
+            font-family: 'Lato', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 6px 0 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .back:active { color: var(--brown); }
+
+        /* ── Primary button ── */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Lato', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            cursor: pointer;
+            box-shadow: 0 4px 18px rgba(201,168,76,.40);
+            transition: all .18s;
+        }
+        .btn:active { transform: scale(.98); box-shadow: 0 2px 8px rgba(201,168,76,.3); }
+        .btn:disabled { opacity: .65; pointer-events: none; }
+
+        /* ── WELCOME ── */
+        .welcome-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 16px 0 8px;
+        }
+        .floral {
+            text-align: center;
+            font-size: 22px;
+            color: var(--gold);
+            letter-spacing: 8px;
+            margin-bottom: 4px;
+            opacity: .75;
+        }
+        .couple {
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+        }
+        .couple h1 {
+            font-size: 40px;
+            line-height: 1.05;
+            color: var(--brown);
+        }
+        .couple h1 em {
+            font-style: italic;
+            color: var(--gold);
+            font-size: 46px;
+        }
+        .couple .fecha {
+            margin-top: 10px;
+            font-size: 13px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--brown-mid);
+            font-family: 'Lato', sans-serif;
+            font-weight: 300;
+        }
+        .welcome-text {
+            text-align: center;
+            color: var(--brown-mid);
+            font-size: 15px;
+            line-height: 1.75;
+            margin: 18px 0 22px;
+            font-weight: 300;
+        }
+
+        /* ── ATTENDANCE ── */
+        .att-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 6px;
+        }
+        .att-btn {
+            padding: 22px 10px 18px;
+            border-radius: 16px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            text-align: center;
+            font-family: 'Lato', sans-serif;
+            transition: all .18s;
+        }
+        .att-btn:active { transform: scale(.97); }
+        .att-yes { background: linear-gradient(135deg,#F0FFF4,#E8F5E9); border-color: #81C784; }
+        .att-no  { background: linear-gradient(135deg,#FFF3F3,#FFEBEE); border-color: #E57373; }
+        .att-btn .ico  { font-size: 34px; display: block; margin-bottom: 7px; }
+        .att-btn .lbl  { font-size: 17px; font-weight: 700; display: block; }
+        .att-btn .sub  { font-size: 12px; color: var(--brown-light); margin-top: 3px; display: block; }
+        .att-yes .lbl  { color: #2E7D32; }
+        .att-no  .lbl  { color: #C62828; }
+
+        /* ── COUNT ── */
+        .count-grid {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .count-btn {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            border: 2px solid rgba(201,168,76,.30);
+            background: #fff;
+            font-family: 'Playfair Display', serif;
+            font-size: 23px;
+            color: var(--brown);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .18s;
+        }
+        .count-btn:active,
+        .count-btn.sel {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: #fff;
+            transform: scale(1.06);
+            box-shadow: 0 4px 14px rgba(201,168,76,.45);
+        }
+
+        /* ── PEOPLE ── */
+        .person-card {
+            background: #fff;
+            border: 1px solid rgba(201,168,76,.22);
+            border-radius: 14px;
+            padding: 18px 18px 12px;
+            margin-bottom: 14px;
+        }
+        .person-hdr {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .person-num {
+            width: 26px; height: 26px;
+            background: linear-gradient(135deg,var(--gold),var(--gold-dark));
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .person-hdr span {
+            font-family: 'Playfair Display', serif;
+            font-size: 15px;
+            color: var(--brown-mid);
+            font-style: italic;
+        }
+
+        .field { margin-bottom: 14px; }
+        .field label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .7px;
+            text-transform: uppercase;
+            color: var(--brown-light);
+            margin-bottom: 6px;
+        }
+        .field input[type="text"] {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1.5px solid rgba(201,168,76,.30);
+            border-radius: 10px;
+            font-family: 'Lato', sans-serif;
+            font-size: 16px;
+            color: var(--brown);
+            background: var(--cream);
+            outline: none;
+            transition: border-color .2s, background .2s;
+        }
+        .field input[type="text"]:focus {
+            border-color: var(--gold);
+            background: #fff;
+        }
+        .field input.err { border-color: #C62828; }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+        .chip {
+            padding: 7px 13px;
+            border-radius: 20px;
+            border: 1.5px solid rgba(201,168,76,.30);
+            background: #fff;
+            font-family: 'Lato', sans-serif;
+            font-size: 13px;
+            color: var(--brown-mid);
+            cursor: pointer;
+            transition: all .15s;
+        }
+        .chip.sel {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: #fff;
+        }
+        .chip:active { transform: scale(.97); }
+
+        .other-input {
+            width: 100%;
+            margin-top: 9px;
+            padding: 11px 14px;
+            border: 1.5px solid rgba(201,168,76,.30);
+            border-radius: 10px;
+            font-family: 'Lato', sans-serif;
+            font-size: 15px;
+            color: var(--brown);
+            background: var(--cream);
+            outline: none;
+            display: none;
+        }
+        .other-input:focus { border-color: var(--gold); background: #fff; }
+
+        .field-err {
+            color: #C62828;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* ── BUS ── */
+        .bus-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 16px;
+            background: #fff;
+            border: 1.5px solid rgba(201,168,76,.20);
+            border-radius: 13px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all .2s;
+            user-select: none;
+        }
+        .bus-row.sel {
+            background: rgba(201,168,76,.08);
+            border-color: var(--gold);
+        }
+        .bus-row-name { font-size: 15px; color: var(--brown); }
+        .toggle {
+            width: 46px; height: 25px;
+            background: #D5D5D5;
+            border-radius: 13px;
+            position: relative;
+            transition: background .2s;
+            flex-shrink: 0;
+        }
+        .bus-row.sel .toggle { background: var(--gold); }
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 21px; height: 21px;
+            background: #fff;
+            border-radius: 50%;
+            top: 2px; left: 2px;
+            transition: transform .2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,.2);
+        }
+        .bus-row.sel .toggle::after { transform: translateX(21px); }
+
+        /* ── CONFIRM SUMMARY ── */
+        .sum-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(201,168,76,.14);
+        }
+        .sum-row:last-child { border-bottom: none; }
+        .sum-ico { font-size: 17px; flex-shrink: 0; margin-top: 2px; }
+        .sum-lbl {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            color: var(--brown-light);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .sum-val { font-size: 15px; color: var(--brown); }
+        .sum-sub { font-size: 13px; color: var(--brown-light); }
+
+        .submit-err {
+            color: #C62828;
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        /* ── THANK YOU ── */
+        .ty-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px 0;
+        }
+        .ty-heart {
+            font-size: 44px;
+            text-align: center;
+            margin: 18px 0;
+            animation: pulse 2.4s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%,100% { transform: scale(1); }
+            50%      { transform: scale(1.12); }
+        }
+
+        /* ── Botón música ── */
+        .music-btn {
+            position: fixed;
+            bottom: 22px;
+            right: 18px;
+            z-index: 100;
+            width: 46px; height: 46px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: #fff;
+            font-size: 19px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(61,43,31,.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .music-btn:active { transform: scale(.93); }
+        .music-btn.playing { box-shadow: 0 4px 16px rgba(201,168,76,.5), 0 0 0 3px rgba(201,168,76,.25); }
+        .music-btn .bar-wrap {
+            display: none;
+            gap: 2.5px;
+            align-items: flex-end;
+            height: 16px;
+        }
+        .music-btn.playing .bar-wrap { display: flex; }
+        .music-btn.playing .note     { display: none; }
+        .bar-wrap span {
+            display: block;
+            width: 3px;
+            background: #fff;
+            border-radius: 2px;
+            animation: eq var(--d, .8s) ease-in-out infinite alternate;
+        }
+        .bar-wrap span:nth-child(1) { --d:.7s; height:7px;  }
+        .bar-wrap span:nth-child(2) { --d:.5s; height:14px; }
+        .bar-wrap span:nth-child(3) { --d:.9s; height:9px;  }
+        @keyframes eq {
+            from { transform: scaleY(.3); }
+            to   { transform: scaleY(1);  }
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            color: var(--brown-light);
+            font-size: 11px;
+            margin-top: 20px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        /* ── Scroll hint ── */
+        .scroll-hint {
+            text-align: center;
+            margin-top: 16px;
+            color: var(--gold);
+            font-size: 18px;
+            opacity: .5;
+            animation: bounce 2.2s ease-in-out infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); opacity: .4; }
+            50%       { transform: translateY(5px); opacity: .8; }
+        }
+
+        /* ── NUESTRA HISTORIA ── */
+        .story-section {
+            padding: 12px 0 32px;
+        }
+        .story-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            text-align: center;
+            color: var(--brown);
+            margin-bottom: 6px;
+        }
+        .story-subtitle {
+            text-align: center;
+            color: var(--brown-light);
+            font-size: 13px;
+            font-weight: 300;
+            font-style: italic;
+            margin-bottom: 22px;
+            letter-spacing: .4px;
+        }
+
+        /* ── Laterales decorativos (pantallas anchas) ── */
+        @media (min-width: 560px) {
+            .container::before,
+            .container::after {
+                content: 'MARINA · 13 · MARZO · 2027 · JAVIER';
+                position: fixed;
+                top: 50%;
+                writing-mode: vertical-rl;
+                font-family: 'Lato', sans-serif;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 5px;
+                color: rgba(201,168,76,.22);
+                pointer-events: none;
+                white-space: nowrap;
+                z-index: 0;
+            }
+            .container::before {
+                right: calc(50% + 258px);
+                transform: translateY(-50%) rotate(180deg);
+            }
+            .container::after {
+                left: calc(50% + 258px);
+                transform: translateY(-50%);
+            }
+        }
+
+        /* ── Carrusel ── */
+        .carousel {
+            position: relative;
+            overflow: hidden;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(61,43,31,.13);
+            background: var(--brown);
+            user-select: none;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform .55s cubic-bezier(.45,0,.25,1);
+            will-change: transform;
+        }
+
+        .carousel-slide {
+            flex: 0 0 100%;
+            position: relative;
+        }
+        .carousel-slide img {
+            width: 100%;
+            height: 340px;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+        }
+
+        /* Año badge */
+        .car-year {
+            position: absolute;
+            bottom: 14px;
+            left: 14px;
+            background: rgba(61,43,31,.62);
+            backdrop-filter: blur(6px);
+            color: var(--gold-light);
+            font-family: 'Playfair Display', serif;
+            font-size: 15px;
+            letter-spacing: 2px;
+            padding: 5px 13px;
+            border-radius: 20px;
+            border: 1px solid rgba(201,168,76,.35);
+        }
+
+        /* Slide especial: pedida (sin imagen, texto centrado) */
+        .carousel-slide.car-special {
+            background: linear-gradient(160deg, #2C1F14 0%, #3D2B1F 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 340px;
+        }
+        .car-special-inner {
+            text-align: center;
+            padding: 28px 26px;
+        }
+        .car-special-inner .ico  { font-size: 44px; display: block; margin-bottom: 14px; }
+        .car-special-inner h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--gold-light);
+            margin-bottom: 10px;
+        }
+        .car-special-inner p {
+            font-size: 14px;
+            color: rgba(253,248,240,.65);
+            font-weight: 300;
+            line-height: 1.7;
+            font-style: italic;
+        }
+
+        /* Flechas prev/next */
+        .car-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(253,248,240,.18);
+            backdrop-filter: blur(4px);
+            border: none;
+            color: #fff;
+            font-size: 22px;
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            transition: background .2s;
+            line-height: 1;
+        }
+        .car-arrow:active { background: rgba(201,168,76,.5); }
+        .car-prev { left: 10px; }
+        .car-next { right: 10px; }
+
+        /* Dots */
+        .car-dots {
+            display: flex;
+            justify-content: center;
+            gap: 7px;
+            padding: 12px 0 4px;
+        }
+        .car-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: rgba(201,168,76,.28);
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: all .3s;
+        }
+        .car-dot.active {
+            background: var(--gold);
+            transform: scale(1.4);
+        }
+
+        .story-cta { margin-top: 26px; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- ═══════════════════════════════════════
+         PASO 0 · BIENVENIDA
+    ═══════════════════════════════════════ -->
+    <section class="step active" id="s-welcome">
+        <div class="welcome-wrap">
+            <div class="floral">❧ ✦ ❧</div>
+            <div class="couple">
+                <h1>Marina<br><em>&amp;</em><br>Javier</h1>
+                <p class="fecha">13 · Marzo · 2027</p>
+            </div>
+            <div class="divider">✦</div>
+            <p class="welcome-text">
+                Nos casamos y, como no podía ser<br>de otra forma, queremos celebrarlo<br>con vosotros. ¿Podéis venir?
+            </p>
+            <button class="btn" onclick="go('s-attendance')">CONFIRMAR ASISTENCIA</button>
+            <p class="scroll-hint">↓</p>
+        </div>
+
+        <!-- ── NUESTRA HISTORIA ── -->
+        <div class="story-section">
+            <div class="divider" style="margin-bottom:22px;">✦</div>
+            <h3 class="story-title">Nuestra historia</h3>
+            <p class="story-subtitle">Desde aquel agosto de 2018...</p>
+
+            <div class="carousel" id="carousel"
+                 ontouchstart="carTouch('start',event)"
+                 ontouchend="carTouch('end',event)">
+
+                <div class="carousel-track" id="car-track">
+
+                    <div class="carousel-slide">
+                        <img src="img/2020-verano.jpg" alt="" loading="lazy">
+                        <span class="car-year">2020</span>
+                    </div>
+
+                    <div class="carousel-slide">
+                        <img src="img/2020-bilbao.jpg" alt="" loading="lazy">
+                        <span class="car-year">2020</span>
+                    </div>
+
+                    <div class="carousel-slide">
+                        <img src="img/2021-granada.jpg" alt="" loading="lazy">
+                        <span class="car-year">2021</span>
+                    </div>
+
+                    <div class="carousel-slide">
+                        <img src="img/2023-roma.jpg" alt="" loading="lazy">
+                        <span class="car-year">2023</span>
+                    </div>
+
+                    <div class="carousel-slide">
+                        <img src="img/2025-londres.jpg" alt="" loading="lazy">
+                        <span class="car-year">2025</span>
+                    </div>
+
+                    <div class="carousel-slide">
+                        <img src="img/2026-pedida.jpg" alt="" loading="lazy">
+                        <span class="car-year">💍 2026</span>
+                    </div>
+
+                    <div class="carousel-slide">
+                        <img src="img/2026-peniscola.jpg" alt="" loading="lazy">
+                        <span class="car-year">2026</span>
+                    </div>
+
+                    <div class="carousel-slide car-special">
+                        <div class="car-special-inner">
+                            <span class="ico">💛</span>
+                            <h4>Marina &amp; Javier</h4>
+                            <p>Y ahora queremos celebrar contigo<br>el capítulo más bonito de nuestra historia.<br><br><strong style="color:var(--gold-light);letter-spacing:2px;font-style:normal;font-size:13px;">13 · MARZO · 2027</strong></p>
+                        </div>
+                    </div>
+
+                </div><!-- /track -->
+
+                <button class="car-arrow car-prev" onclick="carMove(-1)" aria-label="Anterior">&#8249;</button>
+                <button class="car-arrow car-next" onclick="carMove(1)"  aria-label="Siguiente">&#8250;</button>
+
+                <div class="car-dots" id="car-dots"></div>
+            </div><!-- /carousel -->
+
+            <div class="story-cta">
+                <div class="divider" style="margin:24px 0 0;">✦</div>
+            </div>
+        </div><!-- /story-section -->
+
+        <p class="footer">Marina &amp; Javier · 2027</p>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         PASO 1 · ASISTENCIA
+    ═══════════════════════════════════════ -->
+    <section class="step" id="s-attendance">
+        <button class="back" onclick="go('s-welcome')">← Inicio</button>
+        <div class="progress">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+        <div class="card">
+            <div class="step-head">
+                <span class="orn">· · ·</span>
+                <h2>¿Podréis acompañarnos el 13 de marzo?</h2>
+                <p>Necesitamos saberlo para prepararlo todo con cariño</p>
+            </div>
+            <div class="att-grid">
+                <button class="att-btn att-yes" onclick="setAtt(true)">
+                    <span class="ico">🎉</span>
+                    <span class="lbl">¡Sí!</span>
+                    <span class="sub">Allí estaré</span>
+                </button>
+                <button class="att-btn att-no" onclick="setAtt(false)">
+                    <span class="ico">😔</span>
+                    <span class="lbl">No podré</span>
+                    <span class="sub">Lo siento mucho</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         PASO 2 · NÚMERO DE PERSONAS
+    ═══════════════════════════════════════ -->
+    <section class="step" id="s-count">
+        <button class="back" onclick="go('s-attendance')">← Volver</button>
+        <div class="progress">
+            <div class="dot done"></div>
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+        <div class="card">
+            <div class="step-head">
+                <span class="orn">· · ·</span>
+                <h2>¿Cuántas personas venís?</h2>
+                <p>Contad a todos los que vienen con esta invitación</p>
+            </div>
+            <div class="count-grid" id="count-grid">
+                <!-- renderizado por JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         PASO 3 · DATOS DE CADA INVITADO
+    ═══════════════════════════════════════ -->
+    <section class="step" id="s-people">
+        <button class="back" onclick="go('s-count')">← Volver</button>
+        <div class="progress">
+            <div class="dot done"></div>
+            <div class="dot done"></div>
+            <div class="dot active"></div>
+            <div class="dot"></div>
+        </div>
+        <div class="card">
+            <div class="step-head">
+                <span class="orn">· · ·</span>
+                <h2>Datos de cada invitado/a</h2>
+                <p>Nombre y restricción alimentaria de cada persona</p>
+            </div>
+            <div id="people-list"></div>
+            <button class="btn" onclick="validatePeople()">Continuar →</button>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         PASO 4 · AUTOBÚS
+    ═══════════════════════════════════════ -->
+    <section class="step" id="s-bus">
+        <button class="back" onclick="go('s-people')">← Volver</button>
+        <div class="progress">
+            <div class="dot done"></div>
+            <div class="dot done"></div>
+            <div class="dot done"></div>
+            <div class="dot active"></div>
+        </div>
+        <div class="card">
+            <div class="step-head">
+                <span class="orn">🚌</span>
+                <h2>Autobús ida y vuelta</h2>
+                <p>Organizamos un autobús desde Alcañiz hasta la finca del banquete y de vuelta (aprox. 30 min). ¿Quién lo utilizará o prefiere ir en coche propio? Activad el interruptor de los que cogerán el autobús.</p>
+            </div>
+            <div id="bus-list"></div>
+            <div class="divider" style="margin-top:18px;">✦</div>
+            <button class="btn" onclick="goConfirm()">Ver resumen →</button>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         PASO 5 · CONFIRMACIÓN
+    ═══════════════════════════════════════ -->
+    <section class="step" id="s-confirm">
+        <button class="back" onclick="go('s-bus')">← Volver</button>
+        <div class="progress">
+            <div class="dot done"></div>
+            <div class="dot done"></div>
+            <div class="dot done"></div>
+            <div class="dot done"></div>
+        </div>
+        <div class="card">
+            <div class="step-head">
+                <span class="orn">· · ·</span>
+                <h2>Resumen</h2>
+                <p>Revisad que todo es correcto antes de enviar</p>
+            </div>
+            <div id="summary"></div>
+            <div class="divider">✦</div>
+            <p class="submit-err" id="submit-err">
+                Hubo un problema al enviar. Por favor, inténtalo de nuevo.
+            </p>
+            <button class="btn" id="submit-btn" onclick="submitForm()" style="margin-top:14px;">
+                ENVIAR CONFIRMACIÓN ✓
+            </button>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         FINAL · GRACIAS (SÍ)
+    ═══════════════════════════════════════ -->
+    <section class="step" id="s-thanks">
+        <div class="ty-wrap">
+            <div class="floral">❧ ✦ ❧</div>
+            <div class="ty-heart">💛</div>
+            <div class="card" style="text-align:center;">
+                <h2 style="font-family:'Playfair Display',serif;font-size:27px;margin-bottom:10px;">
+                    ¡Gracias!
+                </h2>
+                <div class="divider">✦</div>
+                <p style="color:var(--brown-mid);font-size:15px;line-height:1.75;margin-top:12px;">
+                    Recibida vuestra confirmación.<br>
+                    ¡Estamos deseando celebrarlo<br>junto a vosotros! 🥂
+                </p>
+                <p style="color:var(--brown-light);font-size:12px;margin-top:20px;font-style:italic;">
+                    Marina &amp; Javier · 13 de marzo de 2027
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         FINAL · LO SENTIMOS (NO)
+    ═══════════════════════════════════════ -->
+    <section class="step" id="s-decline">
+        <div class="ty-wrap">
+            <div class="floral">❧ ✦ ❧</div>
+            <div class="card" style="text-align:center;">
+                <div style="font-size:40px;margin-bottom:14px;">🌸</div>
+                <h2 style="font-family:'Playfair Display',serif;font-size:23px;margin-bottom:10px;">
+                    Lo sentimos mucho
+                </h2>
+                <div class="divider">✦</div>
+                <p style="color:var(--brown-mid);font-size:15px;line-height:1.75;margin-top:12px;">
+                    Gracias por avisarnos.<br>
+                    Os tendremos muy presentes ese día.
+                </p>
+                <p style="color:var(--brown-light);font-size:12px;margin-top:20px;font-style:italic;">
+                    Marina &amp; Javier · 13 de marzo de 2027
+                </p>
+            </div>
+        </div>
+    </section>
+
+</div>
+<!-- Música de fondo -->
+<audio id="bg-music" loop preload="none">
+    <source src="audio/fortnight.mp3" type="audio/mpeg">
+</audio>
+
+<button class="music-btn" id="music-btn" aria-label="Música" title="Fortnight · Post Malone &amp; Taylor Swift">
+    <span class="note">♪</span>
+    <span class="bar-wrap" aria-hidden="true">
+        <span></span><span></span><span></span>
+    </span>
+</button>
+
+<script>
+// ─────────────────────────────────────────────────────────────────
+//  CONFIGURACIÓN  →  pegad aquí la URL de vuestro Google Apps Script
+// ─────────────────────────────────────────────────────────────────
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbycHmr1S8hkB7NAXfOXm6ujMernuOpwtgnzFG6GkWRzE8cI_0BBmzuK4N6wEKVzVgo-5A/exec';
+// ─────────────────────────────────────────────────────────────────
+
+const RESTRICTIONS = [
+    { id: 'ninguna',      label: 'Ninguna'              },
+    { id: 'infantil',     label: 'Menú infantil'        },
+    { id: 'vegetariano',  label: 'Vegetariano/a'        },
+    { id: 'vegano',       label: 'Vegano/a'             },
+    { id: 'celiaco',      label: 'Celíaco/a'            },
+    { id: 'frutos_secos', label: 'Alergia frutos secos' },
+    { id: 'otra',         label: 'Otra…'                },
+];
+
+const state = {
+    count: 0,
+    people: [], // [{ name, restriction, restrictionOther, bus }]
+};
+
+/* ── navigation ── */
+function go(id) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── step 1: attendance ── */
+function setAtt(yes) {
+    if (yes) {
+        renderCountGrid();
+        go('s-count');
+    } else {
+        sendDecline();
+    }
+}
+
+async function sendDecline() {
+    send({ attending: false });
+    go('s-decline');
+}
+
+/* ── step 2: count ── */
+function renderCountGrid() {
+    const grid = document.getElementById('count-grid');
+    grid.innerHTML = [1,2,3,4,5,6,7,8].map(n =>
+        `<button class="count-btn" onclick="selectCount(${n})">${n}</button>`
+    ).join('');
+}
+
+function selectCount(n) {
+    state.count = n;
+    state.people = Array.from({ length: n }, () => ({
+        name: '', restriction: 'ninguna', restrictionOther: '', bus: false
+    }));
+    renderPeople();
+    go('s-people');
+}
+
+/* ── step 3: people ── */
+function renderPeople() {
+    document.getElementById('people-list').innerHTML = state.people.map((p, i) => `
+        <div class="person-card" id="pc-${i}">
+            <div class="person-hdr">
+                <div class="person-num">${i + 1}</div>
+                <span>Invitado/a ${i + 1}</span>
+            </div>
+            <div class="field">
+                <label>Nombre completo</label>
+                <input type="text" id="name-${i}"
+                    placeholder="Ej: Ana García"
+                    value="${esc(p.name)}"
+                    oninput="state.people[${i}].name = this.value.trim()"
+                    autocomplete="off" autocorrect="off">
+                <div class="field-err" id="err-${i}">Introduce el nombre, por favor</div>
+            </div>
+            <div class="field">
+                <label>Opción alimentaria</label>
+                <div class="chips" id="chips-${i}">
+                    ${RESTRICTIONS.map(r =>
+                        `<button class="chip ${p.restriction === r.id ? 'sel' : ''}"
+                            onclick="pickRestriction(${i},'${r.id}')">
+                            ${r.label}
+                        </button>`
+                    ).join('')}
+                </div>
+                <input type="text" class="other-input" id="other-${i}"
+                    placeholder="¿Cuál? Ej: alergia al marisco"
+                    style="display:${p.restriction === 'otra' ? 'block' : 'none'}"
+                    value="${esc(p.restrictionOther)}"
+                    oninput="state.people[${i}].restrictionOther = this.value.trim()">
+            </div>
+        </div>
+    `).join('');
+}
+
+function pickRestriction(i, id) {
+    state.people[i].restriction = id;
+    // update chips
+    const chips = document.querySelectorAll(`#chips-${i} .chip`);
+    chips.forEach((c, ci) => c.classList.toggle('sel', RESTRICTIONS[ci].id === id));
+    // show/hide other field
+    document.getElementById(`other-${i}`).style.display = id === 'otra' ? 'block' : 'none';
+}
+
+function validatePeople() {
+    let ok = true;
+    state.people.forEach((p, i) => {
+        const inp = document.getElementById(`name-${i}`);
+        const nm  = inp.value.trim();
+        state.people[i].name = nm;
+        const hasName = nm.length > 0;
+        inp.classList.toggle('err', !hasName);
+        document.getElementById(`err-${i}`).style.display = hasName ? 'none' : 'block';
+        if (!hasName) ok = false;
+        if (p.restriction === 'otra') {
+            state.people[i].restrictionOther =
+                document.getElementById(`other-${i}`).value.trim();
+        }
+    });
+    if (ok) {
+        renderBus();
+        go('s-bus');
+    } else {
+        // scroll to first error
+        document.querySelector('.field input.err')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+/* ── step 4: bus ── */
+function renderBus() {
+    document.getElementById('bus-list').innerHTML = state.people.map((p, i) =>
+        `<div class="bus-row ${p.bus ? 'sel' : ''}" id="br-${i}" onclick="toggleBus(${i})">
+            <span class="bus-row-name">${esc(p.name)}</span>
+            <div class="toggle"></div>
+        </div>`
+    ).join('');
+}
+
+function toggleBus(i) {
+    state.people[i].bus = !state.people[i].bus;
+    document.getElementById(`br-${i}`).classList.toggle('sel', state.people[i].bus);
+}
+
+/* ── step 5: confirm ── */
+function goConfirm() {
+    const busYes = state.people.filter(p => p.bus).map(p => p.name);
+    const busNo  = state.people.filter(p => !p.bus).map(p => p.name);
+
+    document.getElementById('summary').innerHTML = `
+        <div class="sum-row">
+            <span class="sum-ico">🎉</span>
+            <div>
+                <div class="sum-lbl">Asistencia</div>
+                <div class="sum-val">¡Sí, asistimos!</div>
+            </div>
+        </div>
+        <div class="sum-row">
+            <span class="sum-ico">👥</span>
+            <div>
+                <div class="sum-lbl">${state.count} persona${state.count > 1 ? 's' : ''}</div>
+                <div class="sum-val">
+                    ${state.people.map(p => {
+                        const r = restrictionLabel(p);
+                        return `<div style="margin-bottom:5px;">
+                            <strong>${esc(p.name)}</strong>
+                            ${r ? `<span class="sum-sub"> · ${esc(r)}</span>` : ''}
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>
+        </div>
+        <div class="sum-row">
+            <span class="sum-ico">🚌</span>
+            <div>
+                <div class="sum-lbl">Autobús desde Alcañiz</div>
+                <div class="sum-val">
+                    ${busYes.length
+                        ? busYes.map(n => `<div>${esc(n)}</div>`).join('')
+                        : '<span class="sum-sub">Ninguno</span>'}
+                </div>
+            </div>
+        </div>
+    `;
+    go('s-confirm');
+}
+
+/* ── submit ── */
+async function submitForm() {
+    const btn = document.getElementById('submit-btn');
+    const errDiv = document.getElementById('submit-err');
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+    errDiv.style.display = 'none';
+
+    const payload = {
+        attending: true,
+        timestamp: new Date().toISOString(),
+        people: state.people.map(p => ({
+            name:        p.name,
+            restriction: restrictionLabel(p),
+            bus:         p.bus,
+        })),
+    };
+
+    try {
+        await send(payload);
+        go('s-thanks');
+    } catch (e) {
+        btn.disabled = false;
+        btn.textContent = 'ENVIAR CONFIRMACIÓN ✓';
+        errDiv.style.display = 'block';
+    }
+}
+
+function send(payload) {
+    if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+        console.warn('[BODA] Apps Script URL no configurada. Mostrando pantalla de éxito de prueba.');
+        return Promise.resolve();
+    }
+    return fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload),
+        mode: 'no-cors',
+    });
+}
+
+/* ── helpers ── */
+function restrictionLabel(p) {
+    if (p.restriction === 'ninguna') return '';
+    if (p.restriction === 'otra') return p.restrictionOther || 'Otra';
+    return RESTRICTIONS.find(r => r.id === p.restriction)?.label || '';
+}
+
+function esc(s) {
+    if (!s) return '';
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── Música ── */
+(function () {
+    const audio = document.getElementById('bg-music');
+    const btn   = document.getElementById('music-btn');
+    let started = false;
+
+    function play() {
+        audio.volume = 0;
+        audio.play().then(() => {
+            fadeIn();
+            btn.classList.add('playing');
+            started = true;
+        }).catch(() => {});
+    }
+
+    function fadeIn() {
+        let v = 0;
+        const t = setInterval(() => {
+            v = Math.min(v + 0.025, 0.35);
+            audio.volume = v;
+            if (v >= 0.35) clearInterval(t);
+        }, 80);
+    }
+    function fadeOut(cb) {
+        let v = audio.volume;
+        const t = setInterval(() => {
+            v = Math.max(v - 0.025, 0);
+            audio.volume = v;
+            if (v <= 0) { clearInterval(t); cb(); }
+        }, 80);
+    }
+
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (audio.paused) {
+            play();
+        } else {
+            fadeOut(() => { audio.pause(); });
+            btn.classList.remove('playing');
+        }
+    });
+
+    // Arranca en el primer toque/clic en la página
+    document.addEventListener('click',     autoStart, { once: true });
+    document.addEventListener('touchend',  autoStart, { once: true });
+    function autoStart() { if (!started) play(); }
+})();
+
+/* ── Carrusel ── */
+(function () {
+    const track   = document.getElementById('car-track');
+    const dotsBox = document.getElementById('car-dots');
+    const slides  = track ? track.querySelectorAll('.carousel-slide') : [];
+    const total   = slides.length;
+    let   cur     = 0;
+    let   timer   = null;
+    let   touchX  = 0;
+
+    if (!total) return;
+
+    // Crear dots
+    slides.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.className = 'car-dot' + (i === 0 ? ' active' : '');
+        d.setAttribute('aria-label', 'Foto ' + (i + 1));
+        d.onclick = () => carGo(i);
+        dotsBox.appendChild(d);
+    });
+
+    function carGo(n) {
+        cur = (n + total) % total;
+        track.style.transform = `translateX(-${cur * 100}%)`;
+        dotsBox.querySelectorAll('.car-dot').forEach((d, i) =>
+            d.classList.toggle('active', i === cur));
+        resetTimer();
+    }
+
+    function resetTimer() {
+        clearInterval(timer);
+        timer = setInterval(() => carGo(cur + 1), 4200);
+    }
+
+    carGo(0);
+
+    // Exponer globalmente para los botones inline
+    window.carMove = (dir) => carGo(cur + dir);
+
+    // Swipe táctil
+    window.carTouch = (phase, e) => {
+        if (phase === 'start') { touchX = e.touches[0].clientX; }
+        else {
+            const dx = e.changedTouches[0].clientX - touchX;
+            if (Math.abs(dx) > 40) carGo(cur + (dx < 0 ? 1 : -1));
+        }
+    };
+})();
+</script>
+</body>
+</html>
